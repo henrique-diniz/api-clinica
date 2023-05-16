@@ -18,7 +18,7 @@ public record DadosAgendamentoConsulta(
 
         Long idConsulta,
 
-        MotivoCancelamentoConsulta motivo,
+        MotivoCancelamento motivo,
 
         Especialidade especialidade) {
 }

@@ -1,7 +1,8 @@
 package med.voll.api.domain.consulta;
 
 import med.voll.api.domain.ValidacaoException;
-import med.voll.api.domain.consulta.validacoes.ValidadorAgendamentoDeConsulta;
+import med.voll.api.domain.consulta.validacoes.agendamento.ValidadorAgendamentoDeConsulta;
+import med.voll.api.domain.consulta.validacoes.cancelamento.ValidadorCancelamentoDeConsulta;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.medico.MedicoRepository;
 import med.voll.api.domain.paciente.PacienteRepository;
@@ -24,7 +25,8 @@ public class AgendaDeConsultas {
 
     @Autowired
     private List<ValidadorAgendamentoDeConsulta> validadores;
-
+    @Autowired
+    private List<ValidadorCancelamentoDeConsulta> validadoresDeCancelamento;
     public  DadosDetalhamentoConsulta agendar (DadosAgendamentoConsulta dados) {
         if (!pacienteRepository.existsById(dados.idPaciente())) {
             throw new ValidacaoException("Paciente inexistente");
@@ -64,25 +66,10 @@ public class AgendaDeConsultas {
         if (!consultaRepository.existsById(dados.idConsulta())) {
             throw new ValidacaoException("Consulta inexistente");
         }
+        validadoresDeCancelamento.forEach(v -> v.validar(dados));
 
         var consulta = consultaRepository.getReferenceById(dados.idConsulta());
         consulta.cancelar(dados.motivo());
     }
-    /*
-        As seguintes regras de negócio devem ser validadas pelo sistema:
-        • O horário de funcionamento da clínica é de segunda a sábado, das 07:00 às
-        19:00;
-        • As consultas tem duração fixa de 1 hora;
-        • As consultas devem ser agendadas com antecedência mínima de 30
-        minutos;
-        • Não permitir o agendamento de consultas com
-        pacientes inativos no
-        sistema;
-        • Não permitir o agendamento de consultas com médicos inativos no sistema;
-        • Não permitir o agendamento de mais de uma consulta no mesmo dia para
-        um mesmo paciente;
-        • Não permitir o agendamento de uma consulta com um médico que já possui
-        outra consulta agendada na mesma data/hora;
-        • A escolha do médico é opcional, sendo que nesse caso o sistema deve escolher aleatoriamente algum médico disponível na data/hora preenchida.
-     */
+
 }

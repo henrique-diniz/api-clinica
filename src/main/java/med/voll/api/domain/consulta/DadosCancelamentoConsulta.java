@@ -7,5 +7,5 @@ public record DadosCancelamentoConsulta(
     Long idConsulta,
 
     @NotNull
-    MotivoCancelamentoConsulta motivo) {
+    MotivoCancelamento motivo) {
 }
